@@ -1,29 +1,17 @@
-import PropTypes from "prop-types";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import useYupValidationResolver from "../../hooks/useYupValidationResolver";
 import { NotificationContext } from "../../context/notification-context";
+import { schema } from "./schema";
 import "./login-form.scss";
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Please enter valid email")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(12, "Password cannot exceed more than 12 characters")
-    .required("Password is required"),
-});
-
-function LoginForm({ loading, setLoading }) {
+function LoginForm() {
+  const [loading, setLoading] = useState(false);
   const { showNotification } = useContext(NotificationContext);
   const { register, handleSubmit, formState, reset } = useForm({
     defaultValues: {
@@ -73,7 +61,7 @@ function LoginForm({ loading, setLoading }) {
     >
       <Box className="form__title">
         <Typography variant="h4" component="h5">
-          Welcome!
+          Welcome
         </Typography>
       </Box>
       <Box className="form__controls">
@@ -109,10 +97,5 @@ function LoginForm({ loading, setLoading }) {
     </Box>
   );
 }
-
-LoginForm.propTypes = {
-  loading: PropTypes.bool,
-  setLoading: PropTypes.func,
-};
 
 export default LoginForm;

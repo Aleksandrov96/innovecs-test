@@ -1,7 +1,12 @@
 import { createContext, useState } from "react";
 import PropTypes from "prop-types";
 
-export const NotificationContext = createContext();
+export const NotificationContext = createContext({
+  showNotification: () => {},
+  hideNotification: () => {},
+  notificationData: null,
+  isOpen: false,
+});
 
 export function NotificationProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
