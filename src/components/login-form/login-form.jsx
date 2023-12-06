@@ -66,7 +66,6 @@ function LoginForm() {
       </Box>
       <Box className="form__controls">
         <TextField
-          name="email"
           label="Email"
           type="email"
           fullWidth
@@ -76,7 +75,6 @@ function LoginForm() {
           {...register("email")}
         />
         <TextField
-          name="password"
           label="Password"
           type="password"
           fullWidth
