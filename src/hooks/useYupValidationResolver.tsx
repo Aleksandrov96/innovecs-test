@@ -1,8 +1,23 @@
 import { useCallback } from "react";
+import * as yup from "yup";
+import { IFormData } from "@/interfaces/IFormData";
 
-const useYupValidationResolver = (validationSchema) =>
+const useYupValidationResolver = (
+  validationSchema: yup.ObjectSchema<
+    {
+      email: string;
+      password: string;
+    },
+    yup.AnyObject,
+    {
+      email: undefined;
+      password: undefined;
+    },
+    ""
+  >
+) =>
   useCallback(
-    async (data) => {
+    async (data: IFormData) => {
       try {
         const values = await validationSchema.validate(data, {
           abortEarly: false,
@@ -16,7 +31,10 @@ const useYupValidationResolver = (validationSchema) =>
         return {
           values: {},
           errors: errors.inner.reduce(
-            (allErrors, currentError) => ({
+            (
+              allErrors: Record<string, { type?: string; message: string }>,
+              currentError: any
+            ) => ({
               ...allErrors,
               [currentError.path]: {
                 type: currentError.type ?? "validation",
