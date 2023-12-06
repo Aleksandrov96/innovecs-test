@@ -1,10 +1,14 @@
+import PropTypes from "prop-types";
+import { useContext } from "react";
 import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import useYupValidationResolver from "../../hooks/useYupValidationResolver";
+import { NotificationContext } from "../../context/notification-context";
 import "./login-form.scss";
 
 const schema = yup.object().shape({
@@ -19,8 +23,9 @@ const schema = yup.object().shape({
     .required("Password is required"),
 });
 
-function LoginForm() {
-  const { register, handleSubmit, formState } = useForm({
+function LoginForm({ loading, setLoading }) {
+  const { showNotification } = useContext(NotificationContext);
+  const { register, handleSubmit, formState, reset } = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -29,8 +34,33 @@ function LoginForm() {
   });
   const { errors } = formState;
 
+  const simulateLogin = (userData) => {
+    setLoading(true);
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          showNotification({
+            severity: "success",
+            message: "Successfully signed in!",
+          });
+          resolve(userData.email);
+        } catch (error) {
+          showNotification({
+            severity: "error",
+            message: "Error while signing in",
+          });
+          reject(error);
+        } finally {
+          setLoading(false);
+        }
+      }, 3000);
+    });
+  };
+
   const onSubmit = (data) => {
-    
+    simulateLogin(data);
+    reset();
   };
 
   return (
@@ -67,12 +97,22 @@ function LoginForm() {
           InputLabelProps={{ shrink: true }}
           {...register("password")}
         />
-        <Button type="submit" variant="outlined" fullWidth>
-          Sign In
+        <Button
+          type="submit"
+          variant="outlined"
+          fullWidth
+          disabled={loading || !!Object.keys(errors).length}
+        >
+          {loading ? <CircularProgress /> : "Sign In"}
         </Button>
       </Box>
     </Box>
   );
 }
+
+LoginForm.propTypes = {
+  loading: PropTypes.bool,
+  setLoading: PropTypes.func,
+};
 
 export default LoginForm;
